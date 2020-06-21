@@ -11,6 +11,6 @@ namespace Memory.Core.Services
         GameStates BoardState { get; }
 
         IEnumerable<Card> IntializePlayingBoard();
-        Card FlipCard(Card card);
+        GameStates FlipCard(Card card);
     }
 }

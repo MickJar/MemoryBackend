@@ -12,8 +12,14 @@ namespace Memory.Core.Services
     {
         private List<Card> _playingBoard;
         private readonly int boardSize = 8;
+        private Card currentCard;
 
         public GameStates BoardState { get; private set; }
+
+        public MemoryService()
+        {
+            this.BoardState = GameStates.NO_CARD_FLIPPED;
+        }
 
         IEnumerable<Card> IMemoryService.IntializePlayingBoard()
         {
@@ -40,9 +46,38 @@ namespace Memory.Core.Services
             return cards;
         }
 
-        public Card FlipCard(Card card)
+        public GameStates FlipCard(Card card)
         {
-            throw new NotImplementedException();
+            switch (BoardState)
+            {
+                case GameStates.NO_CARD_FLIPPED:
+                    {
+                        // Flip card
+                        currentCard = card;
+                        BoardState = GameStates.CARD_FLIPPED;
+                        card.Flipped = true;
+                        return BoardState;
+                    }
+                case GameStates.CARD_FLIPPED:
+                    {
+                        // Compare Cards
+                        if (currentCard.Color == card.Color)
+                        {
+                            BoardState = GameStates.TWO_CARDS_FLIPPED_EQUAL;
+                            return BoardState;
+
+                        }
+                        else
+                        {
+                            card.Flipped = true;
+                            currentCard = null;
+                            BoardState = GameStates.TWO_CARDS_FLIPPED_UNEQUAL;
+                            return BoardState;
+                        }
+                    }
+                default:
+                    return BoardState;
+            }
         }
     }
 }

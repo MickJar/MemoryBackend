@@ -42,6 +42,27 @@ namespace Memory.Services.Tests
         }
 
         /*
+         * Spelplanen - Alla kort ska ha et unikt ID
+         */
+        [Test]
+        public void Test_Cards_Have_Unique_ID()
+        {
+            // arrange
+            var allIds = Enumerable.Range(0, 16).Select(x => x);
+
+            // act
+            var playingBoard = _memoryService.IntializePlayingBoard();
+
+            // assert
+            Assert.AreEqual(playingBoard.Count(), 16);
+            Assert.AreEqual(playingBoard.Distinct().Count(), 16);
+            foreach(var id in allIds)
+            {
+                Assert.IsTrue(playingBoard.Any(c => c.Index == id));
+            }
+        }
+
+        /*
          * Spelplanen ska ha 2 av varje färg
          */
         [Test]
