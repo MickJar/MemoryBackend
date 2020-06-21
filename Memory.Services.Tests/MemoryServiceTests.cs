@@ -99,7 +99,6 @@ namespace Memory.Services.Tests
         public void All_Cards_Are_Not_Flipped()
         {
             // arrange
-            var notFlipped = false;
 
             // act
             var playingBoard = _memoryService.IntializePlayingBoard();
@@ -135,6 +134,7 @@ namespace Memory.Services.Tests
         public void Flip_A_Card_Equal()
         {
             // arrange
+            _delayHelperMock.Setup(d => d.Sleep(It.IsAny<int>()));
             _delayHelperMock.Setup(d => d.isUnlocked()).Returns(true);
             var playingBoard = _memoryService.IntializePlayingBoard();
             var card = playingBoard.First();
@@ -143,6 +143,7 @@ namespace Memory.Services.Tests
             // act
             var boardState1 = _memoryService.FlipCard(ref card);
             var boardState2 = _memoryService.FlipCard(ref card2);
+            _delayHelperMock.Raise(x => x.flipEvent += null);
 
             // assert
             Assert.IsTrue(card.Flipped, $"Expected frist card: {card.Index} {_memoryService.GetName(card.Color)} to be flipped");
@@ -246,6 +247,7 @@ namespace Memory.Services.Tests
             var boardSize = 8;
             for (int i = 0; i < boardSize-1; i++) {
                 PickSameCard(playingBoard, colorList[i]);
+                _delayHelperMock.Raise(x => x.flipEvent += null);
             }
 
             //act
@@ -254,7 +256,7 @@ namespace Memory.Services.Tests
 
             var boardState1 = _memoryService.FlipCard(ref card);
             var boardState2 = _memoryService.FlipCard(ref card2);
-
+            _delayHelperMock.Raise(x => x.flipEvent += null);
 
             //assert
             Assert.IsTrue(card.Flipped, $"Expected frist card: {card.Index} {card.ColorString} to be flipped");
