@@ -11,6 +11,8 @@ namespace Memory.Core.Constants
         TWO_CARDS_FLIPPED_EQUAL,
         TWO_CARDS_FLIPPED_UNEQUAL,
         GAME_WON,
-        GAME_OVER
+        GAME_OVER,
+        CARD_ALREADY_FLIPPED,
+        BOARD_LOCKED
     }
 }

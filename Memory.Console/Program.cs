@@ -7,6 +7,7 @@ namespace Memory.Terminal
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+
         }
     }
 }

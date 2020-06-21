@@ -8,6 +8,7 @@ namespace Memory.Core.Services
 {
     public interface IMemoryService
     {
+        List<Card> Board { get; }
         GameStates BoardState { get; }
 
         IEnumerable<Card> IntializePlayingBoard();
@@ -15,5 +16,7 @@ namespace Memory.Core.Services
         GameStates FlipCard(ref Card card);
 
         string GetName<T>(T value);
+
+        event Action boardChangeEvent;
     }
 }

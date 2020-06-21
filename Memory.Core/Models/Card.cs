@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using static Memory.Core.Constants.MemoryColors;
@@ -35,6 +36,11 @@ namespace Memory.Core.Models
         private string GetName<T>(T value)
         {
             return Enum.GetName(typeof(T), value);
+        }
+
+        public override string ToString()
+        {
+            return Flipped ? this.ColorString : "#" + Index;
         }
     }
 }
