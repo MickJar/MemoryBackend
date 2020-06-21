@@ -5,6 +5,7 @@ using System.Linq;
 using static Memory.Core.Constants.MemoryColors;
 using Memory.Core.Models;
 using Moq;
+using System.Collections.Generic;
 
 namespace Memory.Services.Tests
 {
@@ -194,6 +195,47 @@ namespace Memory.Services.Tests
             Assert.AreEqual(boardState1, GameStates.CARD_FLIPPED);
             Assert.AreEqual(boardState2, GameStates.TWO_CARDS_FLIPPED_UNEQUAL);
             _delayHelperMock.Verify();
+        }
+
+        /*
+        * Vänd ett andra kort med fel färg vänds först efter 2 sekunder
+        */
+        [Test]
+        public void Flip_All_Cards_Results_In_A_Win()
+        {
+            // arrange
+            _delayHelperMock.Setup(d => d.Sleep(It.IsAny<int>()));
+            var playingBoard = _memoryService.IntializePlayingBoard();
+            var colorList = MemoryColors.ColorList;
+            var boardSize = 8;
+            for (int i = 0; i < boardSize-1; i++) {
+                PickSameCard(playingBoard, colorList[i]);
+            }
+
+            //act
+            var card = playingBoard.First(x => x.Color == colorList[boardSize - 1]);
+            var card2 = playingBoard.First(x => x.Color == card.Color && x.Index != card.Index);
+
+            var boardState1 = _memoryService.FlipCard(ref card);
+            var boardState2 = _memoryService.FlipCard(ref card2);
+
+
+            //assert
+            Assert.IsTrue(card.Flipped, $"Expected frist card: {card.Index} {_memoryService.GetName(card.Color)} to be flipped");
+            Assert.IsTrue(card2.Flipped, $"Expected second card: {card2.Index} {_memoryService.GetName(card2.Color)} to be flipped");
+            Assert.AreEqual(boardState1, GameStates.CARD_FLIPPED);
+            Assert.AreEqual(boardState2, GameStates.GAME_WON);
+            _delayHelperMock.Verify();
+        }
+
+        private void PickSameCard(IEnumerable<Card> playingBoard, Color color)
+        {
+            var card = playingBoard.First(x => x.Color == color);
+            var card2 = playingBoard.First(x => x.Color == card.Color && x.Index != card.Index);
+
+            var boardState1 = _memoryService.FlipCard(ref card);
+            var boardState2 = _memoryService.FlipCard(ref card2);
+
         }
     }
 }
