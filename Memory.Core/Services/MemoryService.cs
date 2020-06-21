@@ -10,22 +10,31 @@ namespace Memory.Core.Services
 {
     public class MemoryService : IMemoryService
     {
-        private IList<Card> _playingBoard;
+        private List<Card> _playingBoard;
         private readonly int boardSize = 8;
         IList<Card> IMemoryService.IntializePlayingBoard()
         {
 
             var rng = new Random();
 
-            _playingBoard = Enumerable.Range(1, boardSize*2).Select(index => new Card
+            var halfTheBoard = Enumerable.Range(0, boardSize).Select(index => new Card
             {
                 Index = index,
-                Color = MemoryColors.ColorList[rng.Next(MemoryColors.ColorList.Length)],
+                Color = MemoryColors.ColorList[index],
                 Flipped = false
             })
             .ToArray();
 
+            _playingBoard = new List<Card>();
+            _playingBoard.AddRange(halfTheBoard);
+            _playingBoard.AddRange(halfTheBoard);
+
             return _playingBoard;
+        }
+
+        private IList<Card> Shuffle(IList<Card> cards) 
+        {
+            return cards;
         }
     }
 }
