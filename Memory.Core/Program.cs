@@ -22,6 +22,8 @@ namespace Memory.Services
             {
                 var playingBoard = memoryService.Board;
                 Console.Clear();
+                Console.WriteLine($"BOARDSTATE: {memoryService.GetName(memoryService.BoardState)}");
+                Console.WriteLine($"SCORE : {memoryService.Score}");
                 Console.WriteLine($"{playingBoard.PrintBoard(4)}");
             };
 
@@ -51,6 +53,7 @@ namespace Memory.Services
                 var boardState = memoryService.FlipCard(ref chosenCard);
                 Console.Clear();
                 Console.WriteLine($"BOARDSTATE: {memoryService.GetName(boardState)}");
+                Console.WriteLine($"SCORE : {memoryService.Score}");
 
             }
         }
