@@ -8,6 +8,7 @@ namespace Memory.Core.Constants
     {
         public static readonly Color[] ColorList = (Color[]) Enum.GetValues(typeof(Color));
 
+
         public enum Color
         {
             RED,

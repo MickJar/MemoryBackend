@@ -50,8 +50,8 @@ namespace Memory.Services.Tests
             var playingBoard = _memoryService.IntializePlayingBoard();
 
             // assert
-            Assert.Equals(playingBoard.Count, 16);
-            Assert.Equals(playingBoard.LongCount(c => c.Color == currentColor), 2);
+            Assert.AreEqual(playingBoard.Count, 16);
+            Assert.AreEqual(playingBoard.LongCount(c => c.Color == currentColor), 2);
            
         }
     }
