@@ -49,17 +49,18 @@ namespace Memory.Services.Tests
         {
             // arrange
             var allIds = Enumerable.Range(0, 16).Select(x => x);
+            var boardSize = 8;
 
             // act
             var playingBoard = _memoryService.IntializePlayingBoard();
 
             // assert
-            Assert.AreEqual(playingBoard.Count(), 16);
-            Assert.AreEqual(playingBoard.Distinct().Count(), 16);
+            Assert.AreEqual(playingBoard.Count(), boardSize*2);
             foreach(var id in allIds)
             {
-                Assert.IsTrue(playingBoard.Any(c => c.Index == id));
+                Assert.IsTrue(playingBoard.Any(c => c.Index == id), $"Expected id: {id} but was not in list");
             }
+            Assert.AreEqual(playingBoard.Distinct().Count(), boardSize*2, $"Expected: {boardSize*2} distinct values");
         }
 
         /*

@@ -2,6 +2,8 @@
 using Memory.Core.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -26,23 +28,29 @@ namespace Memory.Core.Services
 
             var rng = new Random();
 
-            var halfTheBoard = Enumerable.Range(0, boardSize).Select(index => new Card
-            {
-                Index = index,
-                Color = MemoryColors.ColorList[index],
-                Flipped = false
-            })
-            .ToArray();
+            List<Card> halfTheBoard = Enumerable.Range(0, boardSize)
+                .Select(index => new Card(index, MemoryColors.ColorList[index], false))
+                .ToList();
+
+            var otherHalfOfTheBoard = new List<Card>(boardSize);
 
             _playingBoard = new List<Card>();
             _playingBoard.AddRange(halfTheBoard);
-            _playingBoard.AddRange(halfTheBoard);
+            halfTheBoard.ForEach((card) =>
+            {
+                _playingBoard.Add(new Card(card));
+            });
+            _playingBoard = Shuffle(_playingBoard);
 
             return _playingBoard;
         }
 
-        private IList<Card> Shuffle(IList<Card> cards) 
+        private List<Card> Shuffle(List<Card> cards) 
         {
+            foreach (var item in cards.Select((card, index) => new { index, card }))
+            {
+                item.card.Index = item.index;
+            }
             return cards;
         }
 

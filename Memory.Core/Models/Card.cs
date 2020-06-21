@@ -11,5 +11,19 @@ namespace Memory.Core.Models
         public int Index { get; set; }
         public Color Color { get; set; }
         public bool Flipped { get; set; }
+
+        // Copy constructor.
+        public Card(Card previousCard) : this(previousCard.Index, previousCard.Color, previousCard.Flipped)
+        {
+
+        }
+
+        // Instance constructor.
+        public Card(int index, Color color, bool flipped)
+        {
+            Index = index;
+            Color = color;
+            Flipped = flipped;
+        }
     }
 }

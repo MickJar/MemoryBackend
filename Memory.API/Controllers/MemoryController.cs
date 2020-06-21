@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Memory.Core.Models;
 using Memory.Core.Constants;
+using Memory.Core.Services;
 
 namespace Memory.API.Controllers
 {
@@ -17,23 +18,19 @@ namespace Memory.API.Controllers
     {
        
         private readonly ILogger<MemoryController> _logger;
+        private readonly IMemoryService _memoryService;
 
-        public MemoryController(ILogger<MemoryController> logger)
+        public MemoryController(ILogger<MemoryController> logger, IMemoryService memoryService)
         {
             _logger = logger;
+            _memoryService = memoryService;
         }
 
         [HttpGet]
         public IEnumerable<Card> Get()
         {
             var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new Card
-            {
-                Index = index,
-                Color = MemoryColors.ColorList[rng.Next(MemoryColors.ColorList.Length)],
-                Flipped = false
-            })
-            .ToArray();
+            return _memoryService.IntializePlayingBoard();
         }
     }
 }
