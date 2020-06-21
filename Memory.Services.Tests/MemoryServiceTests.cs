@@ -64,5 +64,21 @@ namespace Memory.Services.Tests
             // assert
             Assert.AreEqual(playingBoard.LongCount(c => c.Color == currentColor), 2);
         }
+
+        /*
+       * Alle kortplatser består av nedåtvända kort
+       */
+        [Test]
+        public void All_Cards_Are_Not_Flipped()
+        {
+            // arrange
+            var notFlipped = false;
+
+            // act
+            var playingBoard = _memoryService.IntializePlayingBoard();
+
+            // assert
+            Assert.IsFalse(playingBoard.Any(c => c.Flipped));
+        }
     }
 }
