@@ -115,6 +115,7 @@ namespace Memory.Services.Tests
         public void Flip_A_Card_It_Is_Possible_To_Flip_A_Card()
         {
             // arrange
+            _delayHelperMock.Setup(d => d.isUnlocked()).Returns(true);
             var playingBoard = _memoryService.IntializePlayingBoard();
             var card = playingBoard.First();
 
@@ -134,6 +135,7 @@ namespace Memory.Services.Tests
         public void Flip_A_Card_Equal()
         {
             // arrange
+            _delayHelperMock.Setup(d => d.isUnlocked()).Returns(true);
             var playingBoard = _memoryService.IntializePlayingBoard();
             var card = playingBoard.First();
             var card2 = playingBoard.Single(x => x.Color == card.Color && x.Index != card.Index);
@@ -158,6 +160,7 @@ namespace Memory.Services.Tests
         {
             // arrange
             _delayHelperMock.Setup(d => d.Sleep(It.IsAny<int>()));
+            _delayHelperMock.Setup(d => d.isUnlocked()).Returns(true);
             var playingBoard = _memoryService.IntializePlayingBoard();
             var card = playingBoard.First();
             var card2 = playingBoard.First(x => x.Color != card.Color);
@@ -181,6 +184,7 @@ namespace Memory.Services.Tests
         {
             // arrange
             _delayHelperMock.Setup(d => d.Sleep(It.IsAny<int>()));
+            _delayHelperMock.Setup(d => d.isUnlocked()).Returns(true);
             var playingBoard = _memoryService.IntializePlayingBoard();
             var card = playingBoard.First();
             var card2 = playingBoard.First(x => x.Color != card.Color);
@@ -198,13 +202,45 @@ namespace Memory.Services.Tests
         }
 
         /*
-        * Vänd ett andra kort med fel färg vänds först efter 2 sekunder
+      * Vänd ett andra kort med fel färg vänds först efter 2 sekunder med lås
+      */
+        [Test]
+        public void Flip_A_Card_While_Locked()
+        {
+            // arrange
+            _delayHelperMock.Setup(d => d.Sleep(It.IsAny<int>()));
+            _delayHelperMock.SetupSequence(d => d.isUnlocked())
+                .Returns(true)
+                .Returns(true)
+                .Returns(false);
+            var playingBoard = _memoryService.IntializePlayingBoard();
+            var card = playingBoard.First();
+            var card2 = playingBoard.First(x => x.Color != card.Color);
+            var card3 = playingBoard.First(x => x.Color != card.Color && x.Color != card2.Color);
+
+            // act
+            var boardState1 = _memoryService.FlipCard(ref card);
+            var boardState2 = _memoryService.FlipCard(ref card2);
+            var boardState3 = _memoryService.FlipCard(ref card3);
+
+            // assert
+            Assert.IsTrue(card.Flipped);
+            Assert.IsTrue(card2.Flipped);
+            Assert.AreEqual(GameStates.CARD_FLIPPED, boardState1);
+            Assert.AreEqual(GameStates.TWO_CARDS_FLIPPED_UNEQUAL, boardState2);
+            Assert.AreEqual(GameStates.BOARD_LOCKED, boardState3);
+            _delayHelperMock.Verify();
+        }
+
+        /*
+        * Vänd alla kort och vinner
         */
         [Test]
         public void Flip_All_Cards_Results_In_A_Win()
         {
             // arrange
             _delayHelperMock.Setup(d => d.Sleep(It.IsAny<int>()));
+            _delayHelperMock.Setup(d => d.isUnlocked()).Returns(true);
             var playingBoard = _memoryService.IntializePlayingBoard();
             var colorList = MemoryColors.ColorList;
             var boardSize = 8;
