@@ -264,6 +264,35 @@ namespace Memory.Services.Tests
             _delayHelperMock.Verify();
         }
 
+        /*
+       * Vänd alla kort och vinner, och sen reset
+       */
+        [Test]
+        public void Flip_All_Cards_Results_And_Reset()
+        {
+            // arrange
+            _delayHelperMock.Setup(d => d.Sleep(It.IsAny<int>()));
+            _delayHelperMock.Setup(d => d.isUnlocked()).Returns(true);
+            var playingBoard = _memoryService.IntializePlayingBoard();
+            var colorList = MemoryColors.ColorList;
+            var boardSize = 8;
+            for (int i = 0; i < boardSize; i++)
+            {
+                PickSameCard(playingBoard, colorList[i]);
+            }
+
+            //act
+            playingBoard = _memoryService.IntializePlayingBoard();
+            var boardState = _memoryService.BoardState;
+            var score = _memoryService.Score;
+
+            //assert
+          
+            Assert.AreNotEqual(GameStates.GAME_WON, boardState);
+            Assert.AreEqual(0, score);
+            _delayHelperMock.Verify();
+        }
+
         private void PickSameCard(IEnumerable<Card> playingBoard, Color color)
         {
             var card = playingBoard.First(x => x.Color == color);
