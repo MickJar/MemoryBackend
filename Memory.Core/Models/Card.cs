@@ -10,6 +10,12 @@ namespace Memory.Core.Models
     {
         public int Index { get; set; }
         public Color Color { get; set; }
+
+        public string ColorString { get
+            {
+                return GetName(Color);
+            } 
+        }
         public bool Flipped { get; set; }
 
         // Copy constructor.
@@ -24,6 +30,11 @@ namespace Memory.Core.Models
             Index = index;
             Color = color;
             Flipped = flipped;
+        }
+
+        private string GetName<T>(T value)
+        {
+            return Enum.GetName(typeof(T), value);
         }
     }
 }

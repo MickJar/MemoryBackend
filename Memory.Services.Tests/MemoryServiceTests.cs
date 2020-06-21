@@ -145,8 +145,8 @@ namespace Memory.Services.Tests
             // assert
             Assert.IsTrue(card.Flipped, $"Expected frist card: {card.Index} {_memoryService.GetName(card.Color)} to be flipped");
             Assert.IsTrue(card2.Flipped, $"Expected second card: {card2.Index} {_memoryService.GetName(card2.Color)} to be flipped");
-            Assert.AreEqual(boardState1, GameStates.CARD_FLIPPED);
-            Assert.AreEqual(boardState2, GameStates.TWO_CARDS_FLIPPED_EQUAL);
+            Assert.AreEqual(GameStates.CARD_FLIPPED, boardState1);
+            Assert.AreEqual(GameStates.TWO_CARDS_FLIPPED_EQUAL, boardState2);
         }
 
 
@@ -169,8 +169,8 @@ namespace Memory.Services.Tests
             // assert
             Assert.IsTrue(card.Flipped);
             Assert.IsTrue(card2.Flipped);
-            Assert.AreEqual(boardState1, GameStates.CARD_FLIPPED);
-            Assert.AreEqual(boardState2, GameStates.TWO_CARDS_FLIPPED_UNEQUAL);
+            Assert.AreEqual(GameStates.CARD_FLIPPED, boardState1);
+            Assert.AreEqual(GameStates.TWO_CARDS_FLIPPED_UNEQUAL, boardState2);
         }
 
         /*
@@ -192,8 +192,8 @@ namespace Memory.Services.Tests
             // assert
             Assert.IsTrue(card.Flipped);
             Assert.IsTrue(card2.Flipped);
-            Assert.AreEqual(boardState1, GameStates.CARD_FLIPPED);
-            Assert.AreEqual(boardState2, GameStates.TWO_CARDS_FLIPPED_UNEQUAL);
+            Assert.AreEqual(GameStates.CARD_FLIPPED, boardState1);
+            Assert.AreEqual(GameStates.TWO_CARDS_FLIPPED_UNEQUAL, boardState2);
             _delayHelperMock.Verify();
         }
 
@@ -221,10 +221,10 @@ namespace Memory.Services.Tests
 
 
             //assert
-            Assert.IsTrue(card.Flipped, $"Expected frist card: {card.Index} {_memoryService.GetName(card.Color)} to be flipped");
-            Assert.IsTrue(card2.Flipped, $"Expected second card: {card2.Index} {_memoryService.GetName(card2.Color)} to be flipped");
-            Assert.AreEqual(boardState1, GameStates.CARD_FLIPPED);
-            Assert.AreEqual(boardState2, GameStates.GAME_WON);
+            Assert.IsTrue(card.Flipped, $"Expected frist card: {card.Index} {card.ColorString} to be flipped");
+            Assert.IsTrue(card2.Flipped, $"Expected second card: {card2.Index} {card.ColorString} to be flipped");
+            Assert.AreEqual(GameStates.CARD_FLIPPED, boardState1);
+            Assert.AreEqual(GameStates.GAME_WON, boardState2);
             _delayHelperMock.Verify();
         }
 

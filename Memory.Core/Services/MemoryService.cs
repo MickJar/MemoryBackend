@@ -19,7 +19,9 @@ namespace Memory.Core.Services
         private Card currentCard;
         private readonly IDelayHelper _delayHelper;
 
+
         public GameStates BoardState { get; private set; }
+        public int Score { get; private set; }
 
         public MemoryService(IDelayHelper delayHelper)
         {
@@ -75,8 +77,18 @@ namespace Memory.Core.Services
                         // Compare Cards
                         if (currentCard.Color == card.Color)
                         {
-                            BoardState = GameStates.TWO_CARDS_FLIPPED_EQUAL;
+                            // Check if win condition is met
+                            if(HasWon())
+                            {
+                                BoardState = GameStates.GAME_WON;
+                            } else
+                            {
+                                BoardState = GameStates.TWO_CARDS_FLIPPED_EQUAL;
+                                currentCard = null;
+                            }
+                            Score++;
                             card.Flipped = true;
+                            
                             return BoardState;
 
                         }
@@ -89,9 +101,21 @@ namespace Memory.Core.Services
                             return BoardState;
                         }
                     }
+                case GameStates.TWO_CARDS_FLIPPED_EQUAL:
+                case GameStates.TWO_CARDS_FLIPPED_UNEQUAL:
+                    {
+                        BoardState = GameStates.NO_CARD_FLIPPED;
+                        return FlipCard(ref card);
+                    }
                 default:
                     return BoardState;
             }
+        }
+
+        private bool HasWon()
+        {
+            // Winning is when you have flipped all but one, while having a match. (The match is not necessary, since a correct playing field you must match the last one)
+            return _playingBoard.Where(x => x.Flipped).Count() == ((boardSize * 2) - 1);
         }
 
         public string GetName<T>(T value)
