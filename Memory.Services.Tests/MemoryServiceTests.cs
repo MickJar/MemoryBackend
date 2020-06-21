@@ -26,13 +26,25 @@ namespace Memory.Services.Tests
 
         /*
          * Spelplanen ska bestå av ett 4v4 rutnät, 16 rutor totalt
-         * 
-         * 
-         * 
-         * 
          */
         [Test]
-        public void Test_4V4_GRID(
+        public void Test_4V4_GRID()
+        {
+            // arrange
+
+
+            // act
+            var playingBoard = _memoryService.IntializePlayingBoard();
+
+            // assert
+            Assert.AreEqual(playingBoard.Count, 16);
+        }
+
+        /*
+         * Spelplanen ska ha 2 av varje färg
+         */
+        [Test]
+        public void Contains_All_Colours_Twice(
             [Values(
             MemoryColors.Color.BLUE,
             MemoryColors.Color.GREEN,
@@ -50,9 +62,7 @@ namespace Memory.Services.Tests
             var playingBoard = _memoryService.IntializePlayingBoard();
 
             // assert
-            Assert.AreEqual(playingBoard.Count, 16);
             Assert.AreEqual(playingBoard.LongCount(c => c.Color == currentColor), 2);
-           
         }
     }
 }
