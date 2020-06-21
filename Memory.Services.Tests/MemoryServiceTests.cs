@@ -38,7 +38,7 @@ namespace Memory.Services.Tests
             var playingBoard = _memoryService.IntializePlayingBoard();
 
             // assert
-            Assert.AreEqual(playingBoard.Count, 16);
+            Assert.AreEqual(playingBoard.Count(), 16);
         }
 
         /*
@@ -83,20 +83,67 @@ namespace Memory.Services.Tests
         }
 
         /*
-        * Flip a card
+        * Det är möjligt at vända ett kort
         */
         [Test]
         public void Flip_A_Card_It_Is_Possible_To_Flip_A_Card()
         {
             // arrange
             var playingBoard = _memoryService.IntializePlayingBoard();
-            var card = playingBoard[0];
+            var card = playingBoard.First();
 
             // act
-            card = _memoryService.FlipCard(card);
+            var boardState = _memoryService.FlipCard(card);
 
             // assert
             Assert.IsTrue(card.Flipped);
+            Assert.AreEqual(boardState, GameStates.CARD_FLIPPED);
+        }
+
+
+        /*
+        * Vänd ett andra kort med samma färg
+        */
+        [Test]
+        public void Flip_A_Card_Equal()
+        {
+            // arrange
+            var playingBoard = _memoryService.IntializePlayingBoard();
+            var card = playingBoard.First();
+            var card2 = playingBoard.Single(x => x.Color == card.Color && x.Index != card.Index);
+
+            // act
+            var boardState1 = _memoryService.FlipCard(card);
+            var boardState2 = _memoryService.FlipCard(card2);
+
+            // assert
+            Assert.IsTrue(card.Flipped);
+            Assert.IsTrue(card2.Flipped);
+            Assert.AreEqual(boardState1, GameStates.CARD_FLIPPED);
+            Assert.AreEqual(boardState2, GameStates.TWO_CARDS_FLIPPED_EQUAL);
+        }
+
+
+        /*
+        * Vänd ett andra kort med fel färg
+        */
+        [Test]
+        public void Flip_A_Card_Unequal()
+        {
+            // arrange
+            var playingBoard = _memoryService.IntializePlayingBoard();
+            var card = playingBoard.First();
+            var card2 = playingBoard.Single(x => x.Color != card.Color);
+
+            // act
+            var boardState1 = _memoryService.FlipCard(card);
+            var boardState2 = _memoryService.FlipCard(card2);
+
+            // assert
+            Assert.IsTrue(card.Flipped);
+            Assert.IsTrue(card2.Flipped);
+            Assert.AreEqual(boardState1, GameStates.CARD_FLIPPED);
+            Assert.AreEqual(boardState2, GameStates.TWO_CARDS_FLIPPED_UNEQUAL);
         }
     }
 }

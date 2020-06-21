@@ -12,7 +12,10 @@ namespace Memory.Core.Services
     {
         private List<Card> _playingBoard;
         private readonly int boardSize = 8;
-        IList<Card> IMemoryService.IntializePlayingBoard()
+
+        public GameStates BoardState { get; private set; }
+
+        IEnumerable<Card> IMemoryService.IntializePlayingBoard()
         {
 
             var rng = new Random();
