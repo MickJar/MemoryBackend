@@ -1,5 +1,6 @@
 ﻿using Memory.Core.Constants;
 using Memory.Core.Models;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,22 +17,14 @@ namespace Memory.Core.Services
     {
         private readonly int boardSize = 8;
         private readonly int SleepLengthInSeconds = 2;
-        private List<Card> _playingBoard;
         private Card currentCard;
-        private int _lock = 0;
         private readonly IDelayHelper _delayHelper;
 
         public event Action boardChangeEvent;
         public GameStates BoardState { get; private set; }
         public int Score { get; private set; }
 
-        public List<Card> Board
-        {
-            get
-            {
-                return _playingBoard;
-            }
-        }
+        public List<Card> Board { get; private set; }
 
         public MemoryService(IDelayHelper delayHelper)
         {
@@ -41,8 +34,8 @@ namespace Memory.Core.Services
 
         IEnumerable<Card> IMemoryService.IntializePlayingBoard()
         {
-
-            var rng = new Random();
+            Score = 0;
+            BoardState = GameStates.NO_CARD_FLIPPED;
 
             List<Card> halfTheBoard = Enumerable.Range(0, boardSize)
                 .Select(index => new Card(index, MemoryColors.ColorList[index], false))
@@ -50,15 +43,17 @@ namespace Memory.Core.Services
 
             var otherHalfOfTheBoard = new List<Card>(boardSize);
 
-            _playingBoard = new List<Card>();
-            _playingBoard.AddRange(halfTheBoard);
+            Board = new List<Card>();
+            Board.AddRange(halfTheBoard);
             halfTheBoard.ForEach((card) =>
             {
-                _playingBoard.Add(new Card(card));
+                Board.Add(new Card(card));
             });
-            _playingBoard = Shuffle(_playingBoard);
+            Board = Shuffle(Board);
 
-            return _playingBoard;
+            boardChangeEvent?.Invoke();
+
+            return Board;
         }
 
         private List<Card> Shuffle(List<Card> cards) 
@@ -100,10 +95,17 @@ namespace Memory.Core.Services
                                 } else
                                 {
                                     BoardState = GameStates.TWO_CARDS_FLIPPED_EQUAL;
-                                    currentCard = null;
+                                    
                                 }
+                                
                                 Score++;
-                                flipCard(ref card);
+                                var cardIndex = card.Index;
+                                var currentCardIndex = currentCard.Index;
+                                _delayHelper.flipEvent += () => flipCard(cardIndex, inPlay: false);
+                                _delayHelper.flipEvent += () => flipCard(currentCardIndex, inPlay: false);
+                                _delayHelper.Sleep(SleepLengthInSeconds);
+
+                                currentCard = null;
 
                                 return BoardState;
 
@@ -137,20 +139,22 @@ namespace Memory.Core.Services
         private bool HasWon()
         {
             // Winning is when you have flipped all but one, while having a match. (The match is not necessary, since a correct playing field you must match the last one)
-            return _playingBoard.Where(x => x.Flipped).Count() == ((boardSize * 2) - 1);
+            return Board.Where(x => x.Flipped).Count() == ((boardSize * 2) - 1);
         }
 
-        private void flipCard(ref Card card, bool value = true)
+        private void flipCard(ref Card card, bool value = true, bool inPlay = true)
         {
             card.Flipped = value;
             var index = card.Index;
-            _playingBoard.Find(c => c.Index == index).Flipped = value;
+            Board.Find(c => c.Index == index).Flipped = value;
+            Board.Find(c => c.Index == index).inPlay = inPlay;
         }
 
-        private void flipCard(int cardIndex, bool value = true)
+        private void flipCard(int cardIndex, bool value = true, bool inPlay = true)
         {
-            _playingBoard.Find(c => c.Index == cardIndex).Flipped = value;
-            boardChangeEvent();
+            Board.Find(c => c.Index == cardIndex).Flipped = value;
+            Board.Find(c => c.Index == cardIndex).inPlay = inPlay;
+            boardChangeEvent?.Invoke();
         }
 
         public string GetName<T>(T value)

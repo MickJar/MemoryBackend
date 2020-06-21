@@ -18,6 +18,7 @@ namespace Memory.Core.Models
             } 
         }
         public bool Flipped { get; set; }
+        public bool inPlay { get; set; }
 
         // Copy constructor.
         public Card(Card previousCard) : this(previousCard.Index, previousCard.Color, previousCard.Flipped)
@@ -31,6 +32,7 @@ namespace Memory.Core.Models
             Index = index;
             Color = color;
             Flipped = flipped;
+            inPlay = true;
         }
 
         private string GetName<T>(T value)
@@ -40,6 +42,10 @@ namespace Memory.Core.Models
 
         public override string ToString()
         {
+            if (!inPlay)
+            {
+                return "";
+            }
             return Flipped ? this.ColorString : "#" + Index;
         }
     }

@@ -42,7 +42,7 @@ namespace Memory.Services
                         chosenCard = playingBoard.First(x => x.Index == row);
                         incorrectInput = false;
                         
-                    } catch (Exception e)
+                    } catch (Exception )
                     {
                         Console.WriteLine("Incorrect input");
                         continue;
@@ -51,6 +51,30 @@ namespace Memory.Services
 
                 
                 var boardState = memoryService.FlipCard(ref chosenCard);
+                if (boardState == Memory.Core.Constants.GameStates.GAME_WON)
+                {
+                    Console.WriteLine("You have won!!");
+                    Console.WriteLine($"BOARDSTATE: {memoryService.GetName(boardState)}");
+                    Console.WriteLine($"SCORE : {memoryService.Score}");
+                    var startOverInput = true;
+                    while (startOverInput)
+                    {
+                        Console.WriteLine("Would you like to start a new round? (Y/N)");
+                        var input = Console.ReadLine();
+                        if (input.ToUpper() == "Y")
+                        {
+                            playingBoard = memoryService.IntializePlayingBoard();
+                            startOverInput = false;
+                            continue;
+                        } else if (input.ToUpper() == "N")
+                        {
+                            running = false;
+                            startOverInput = false;
+                            continue;
+                        }
+                    }
+                    
+                }
                 Console.Clear();
                 Console.WriteLine($"BOARDSTATE: {memoryService.GetName(boardState)}");
                 Console.WriteLine($"SCORE : {memoryService.Score}");
