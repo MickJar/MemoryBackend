@@ -6,8 +6,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Memory.Services.Models;
-using Memory.Services.Constants;
+using Memory.Core.Models;
+using Memory.Core.Constants;
 
 namespace Memory.API.Controllers
 {
@@ -30,7 +30,7 @@ namespace Memory.API.Controllers
             return Enumerable.Range(1, 5).Select(index => new Card
             {
                 Index = index,
-                Color = MemoryColors.Colors[rng.Next(MemoryColors.Colors.Length)],
+                Color = MemoryColors.ColorList[rng.Next(MemoryColors.ColorList.Length)],
                 Flipped = false
             })
             .ToArray();
