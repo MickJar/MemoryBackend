@@ -8,5 +8,6 @@ namespace Memory.Core.Services
     public interface IMemoryService
     {
         IList<Card> IntializePlayingBoard();
+        Card FlipCard(Card card);
     }
 }

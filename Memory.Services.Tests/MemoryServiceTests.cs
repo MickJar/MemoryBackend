@@ -3,6 +3,7 @@ using Memory.Core.Services;
 using Memory.Core.Constants;
 using System.Linq;
 using static Memory.Core.Constants.MemoryColors;
+using Memory.Core.Models;
 
 namespace Memory.Services.Tests
 {
@@ -79,6 +80,23 @@ namespace Memory.Services.Tests
 
             // assert
             Assert.IsFalse(playingBoard.Any(c => c.Flipped));
+        }
+
+        /*
+        * Flip a card
+        */
+        [Test]
+        public void Flip_A_Card_It_Is_Possible_To_Flip_A_Card()
+        {
+            // arrange
+            var playingBoard = _memoryService.IntializePlayingBoard();
+            var card = playingBoard[0];
+
+            // act
+            card = _memoryService.FlipCard(card);
+
+            // assert
+            Assert.IsTrue(card.Flipped);
         }
     }
 }

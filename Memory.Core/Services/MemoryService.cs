@@ -36,5 +36,10 @@ namespace Memory.Core.Services
         {
             return cards;
         }
+
+        public Card FlipCard(Card card)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
