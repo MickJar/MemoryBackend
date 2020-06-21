@@ -1,10 +1,7 @@
 ﻿using Memory.Core.Models;
 using Memory.Core.Services;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
 
 namespace Memory.Services
 {

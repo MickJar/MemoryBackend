@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Memory.Core.Constants
+﻿namespace Memory.Core.Constants
 {
     public enum GameStates
     {

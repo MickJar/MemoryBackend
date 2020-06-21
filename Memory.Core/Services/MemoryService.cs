@@ -1,15 +1,9 @@
 ﻿using Memory.Core.Constants;
 using Memory.Core.Models;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading;
 
 namespace Memory.Core.Services
 {
@@ -99,27 +93,17 @@ namespace Memory.Core.Services
                                 }
                                 
                                 Score++;
-                                var cardIndex = card.Index;
-                                var currentCardIndex = currentCard.Index;
-                                _delayHelper.flipEvent += () => flipCard(cardIndex, inPlay: false);
-                                _delayHelper.flipEvent += () => flipCard(currentCardIndex, inPlay: false);
-                                _delayHelper.Sleep(SleepLengthInSeconds);
-
+                                flipCardEvent(ref card, inPlay: false);
                                 currentCard = null;
 
                                 return BoardState;
-
                             }
                             else
                             {
-                                flipCard(ref card);
-                                var cardIndex = card.Index;
-                                var currentCardIndex = currentCard.Index;
-                                _delayHelper.flipEvent += () => flipCard(cardIndex, false);
-                                _delayHelper.flipEvent += () => flipCard(currentCardIndex, false);
-                                _delayHelper.Sleep(SleepLengthInSeconds);
+                                flipCardEvent(ref card, flipped: false);
                                 currentCard = null;
                                 BoardState = GameStates.TWO_CARDS_FLIPPED_UNEQUAL;
+
                                 return BoardState;
                             }
                         }
@@ -136,9 +120,21 @@ namespace Memory.Core.Services
             return GameStates.BOARD_LOCKED;
         }
 
+        private void flipCardEvent(ref Card card, bool flipped = true, bool inPlay = true)
+        {
+            flipCard(ref card);
+            var cardIndex = card.Index;
+            var currentCardIndex = currentCard.Index;
+            _delayHelper.flipEvent += () => flipCard(cardIndex, flipped, inPlay);
+            _delayHelper.flipEvent += () => flipCard(currentCardIndex, flipped, inPlay);
+            _delayHelper.Sleep(SleepLengthInSeconds);
+        }
+
+
         private bool HasWon()
         {
-            // Winning is when you have flipped all but one, while having a match. (The match is not necessary, since a correct playing field you must match the last one)
+            // Winning is when you have flipped all but one, while having a match. 
+            // (The match is not necessary, since a correct playing field you must match the last one)
             return Board.Where(x => x.Flipped).Count() == ((boardSize * 2) - 1);
         }
 
@@ -150,9 +146,9 @@ namespace Memory.Core.Services
             Board.Find(c => c.Index == index).inPlay = inPlay;
         }
 
-        private void flipCard(int cardIndex, bool value = true, bool inPlay = true)
+        private void flipCard(int cardIndex, bool flipped = true, bool inPlay = true)
         {
-            Board.Find(c => c.Index == cardIndex).Flipped = value;
+            Board.Find(c => c.Index == cardIndex).Flipped = flipped;
             Board.Find(c => c.Index == cardIndex).inPlay = inPlay;
             boardChangeEvent?.Invoke();
         }
