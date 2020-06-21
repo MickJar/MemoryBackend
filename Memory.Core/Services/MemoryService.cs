@@ -54,7 +54,7 @@ namespace Memory.Core.Services
             return cards;
         }
 
-        public GameStates FlipCard(Card card)
+        public GameStates FlipCard(ref Card card)
         {
             switch (BoardState)
             {
@@ -72,6 +72,7 @@ namespace Memory.Core.Services
                         if (currentCard.Color == card.Color)
                         {
                             BoardState = GameStates.TWO_CARDS_FLIPPED_EQUAL;
+                            card.Flipped = true;
                             return BoardState;
 
                         }
@@ -86,6 +87,11 @@ namespace Memory.Core.Services
                 default:
                     return BoardState;
             }
+        }
+
+        public string GetName<T>(T value)
+        {
+            return Enum.GetName(typeof(T), value);
         }
     }
 }

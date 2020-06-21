@@ -115,7 +115,7 @@ namespace Memory.Services.Tests
             var card = playingBoard.First();
 
             // act
-            var boardState = _memoryService.FlipCard(card);
+            var boardState = _memoryService.FlipCard(ref card);
 
             // assert
             Assert.IsTrue(card.Flipped);
@@ -135,12 +135,12 @@ namespace Memory.Services.Tests
             var card2 = playingBoard.Single(x => x.Color == card.Color && x.Index != card.Index);
 
             // act
-            var boardState1 = _memoryService.FlipCard(card);
-            var boardState2 = _memoryService.FlipCard(card2);
+            var boardState1 = _memoryService.FlipCard(ref card);
+            var boardState2 = _memoryService.FlipCard(ref card2);
 
             // assert
-            Assert.IsTrue(card.Flipped);
-            Assert.IsTrue(card2.Flipped);
+            Assert.IsTrue(card.Flipped, $"Expected frist card: {card.Index} {_memoryService.GetName(card.Color)} to be flipped");
+            Assert.IsTrue(card2.Flipped, $"Expected second card: {card2.Index} {_memoryService.GetName(card2.Color)} to be flipped");
             Assert.AreEqual(boardState1, GameStates.CARD_FLIPPED);
             Assert.AreEqual(boardState2, GameStates.TWO_CARDS_FLIPPED_EQUAL);
         }
@@ -155,11 +155,11 @@ namespace Memory.Services.Tests
             // arrange
             var playingBoard = _memoryService.IntializePlayingBoard();
             var card = playingBoard.First();
-            var card2 = playingBoard.Single(x => x.Color != card.Color);
+            var card2 = playingBoard.First(x => x.Color != card.Color);
 
             // act
-            var boardState1 = _memoryService.FlipCard(card);
-            var boardState2 = _memoryService.FlipCard(card2);
+            var boardState1 = _memoryService.FlipCard(ref card);
+            var boardState2 = _memoryService.FlipCard(ref card2);
 
             // assert
             Assert.IsTrue(card.Flipped);
