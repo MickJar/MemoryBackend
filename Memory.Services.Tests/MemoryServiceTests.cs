@@ -4,6 +4,7 @@ using Memory.Core.Constants;
 using System.Linq;
 using static Memory.Core.Constants.MemoryColors;
 using Memory.Core.Models;
+using Moq;
 
 namespace Memory.Services.Tests
 {
@@ -19,10 +20,12 @@ namespace Memory.Services.Tests
     public class Tests
     {
         private IMemoryService _memoryService { get; set; }
+        private Mock<IDelayHelper> _delayHelperMock { get; set; }
         [SetUp]
         public void Setup()
         {
-            _memoryService = new MemoryService();
+            _delayHelperMock = new Mock<IDelayHelper>(MockBehavior.Strict);
+            _memoryService = new MemoryService(_delayHelperMock.Object);
         }
 
         /*
@@ -153,6 +156,7 @@ namespace Memory.Services.Tests
         public void Flip_A_Card_Unequal()
         {
             // arrange
+            _delayHelperMock.Setup(d => d.Sleep(It.IsAny<int>()));
             var playingBoard = _memoryService.IntializePlayingBoard();
             var card = playingBoard.First();
             var card2 = playingBoard.First(x => x.Color != card.Color);
@@ -166,6 +170,30 @@ namespace Memory.Services.Tests
             Assert.IsTrue(card2.Flipped);
             Assert.AreEqual(boardState1, GameStates.CARD_FLIPPED);
             Assert.AreEqual(boardState2, GameStates.TWO_CARDS_FLIPPED_UNEQUAL);
+        }
+
+        /*
+       * Vänd ett andra kort med fel färg vänds först efter 2 sekunder
+       */
+        [Test]
+        public void Flip_A_Card_Unequal_Flipped_After_Two_Seconds()
+        {
+            // arrange
+            _delayHelperMock.Setup(d => d.Sleep(It.IsAny<int>()));
+            var playingBoard = _memoryService.IntializePlayingBoard();
+            var card = playingBoard.First();
+            var card2 = playingBoard.First(x => x.Color != card.Color);
+
+            // act
+            var boardState1 = _memoryService.FlipCard(ref card);
+            var boardState2 = _memoryService.FlipCard(ref card2);
+
+            // assert
+            Assert.IsTrue(card.Flipped);
+            Assert.IsTrue(card2.Flipped);
+            Assert.AreEqual(boardState1, GameStates.CARD_FLIPPED);
+            Assert.AreEqual(boardState2, GameStates.TWO_CARDS_FLIPPED_UNEQUAL);
+            _delayHelperMock.Verify();
         }
     }
 }

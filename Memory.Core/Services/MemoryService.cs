@@ -7,20 +7,24 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Memory.Core.Services
 {
     public class MemoryService : IMemoryService
     {
-        private List<Card> _playingBoard;
         private readonly int boardSize = 8;
+        private readonly int SleepLengthInSeconds = 2;
+        private List<Card> _playingBoard;
         private Card currentCard;
+        private readonly IDelayHelper _delayHelper;
 
         public GameStates BoardState { get; private set; }
 
-        public MemoryService()
+        public MemoryService(IDelayHelper delayHelper)
         {
             this.BoardState = GameStates.NO_CARD_FLIPPED;
+            this._delayHelper = delayHelper;
         }
 
         IEnumerable<Card> IMemoryService.IntializePlayingBoard()
@@ -80,6 +84,7 @@ namespace Memory.Core.Services
                         {
                             card.Flipped = true;
                             currentCard = null;
+                            _delayHelper.Sleep(SleepLengthInSeconds*1000);
                             BoardState = GameStates.TWO_CARDS_FLIPPED_UNEQUAL;
                             return BoardState;
                         }

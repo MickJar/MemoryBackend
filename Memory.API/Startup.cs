@@ -28,6 +28,7 @@ namespace Memory.API
         {
             services.AddControllers();
             services.AddSingleton<IMemoryService, MemoryService>();
+            services.AddSingleton<IDelayHelper, DelayHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

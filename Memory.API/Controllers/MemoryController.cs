@@ -29,7 +29,6 @@ namespace Memory.API.Controllers
         [HttpGet]
         public IEnumerable<Card> Get()
         {
-            var rng = new Random();
             return _memoryService.IntializePlayingBoard();
         }
     }
